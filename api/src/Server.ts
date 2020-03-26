@@ -1,6 +1,5 @@
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
-import path from 'path';
 import helmet from 'helmet';
 
 import express, { Request, Response, NextFunction } from 'express';
@@ -9,13 +8,13 @@ import 'express-async-errors';
 
 import HeartbeatRouter from './routes/Heartbeat';
 import logger from '@shared/Logger';
-
+import GraphqlServer from '@graphql/server'
 
 // Init express
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Show routes called in console during development
@@ -30,6 +29,8 @@ if (process.env.NODE_ENV === 'production') {
 
 // Add APIs
 app.use('/heartbeat', HeartbeatRouter);
+
+GraphqlServer.applyMiddleware({ app })
 
 // Print API errors
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
