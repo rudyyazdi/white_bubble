@@ -2,18 +2,18 @@ import { ApolloServer, gql } from 'apollo-server-express';
 
 const typeDefs = gql`
   type Bubble {
-    title: String
+    text: String
   }
   type Query {
     bubbles: [Bubble]
   }
   type Mutation {
-    addBubble(title: String): Bubble
+    addBubble(text: String): Bubble
   }
 `;
 
 interface Bubble {
-  title: string
+  text: string
 }
 
 const bubbles: Bubble[] = []
