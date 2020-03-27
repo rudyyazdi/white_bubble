@@ -8,7 +8,7 @@ import 'express-async-errors';
 
 import HeartbeatRouter from './routes/Heartbeat';
 import logger from '@shared/Logger';
-import GraphqlServer from '@graphql/server'
+import GraphqlServer from 'src/graphql/server'
 
 // Init express
 const app = express();

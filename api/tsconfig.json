@@ -14,7 +14,6 @@
     "moduleResolution": "node",
     "paths": {
       "@shared/*": ["src/shared/*"],
-      "@graphql/*": ["src/graphql/*"],
       "@routes/*": ["src/routes/*"],
       "@server": ["src/Server"]
     },
