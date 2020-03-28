@@ -1,6 +1,7 @@
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
+import graphqlHTTP from 'express-graphql';
 
 import express, { Request, Response, NextFunction } from 'express';
 import { BAD_REQUEST } from 'http-status-codes';
@@ -8,7 +9,7 @@ import 'express-async-errors';
 
 import HeartbeatRouter from './routes/Heartbeat';
 import logger from '@shared/Logger';
-import GraphqlServer from 'src/graphql/server'
+import createSchema from 'src/graphql/schema'
 
 // Init express
 const app = express();
@@ -30,7 +31,15 @@ if (process.env.NODE_ENV === 'production') {
 // Add APIs
 app.use('/heartbeat', HeartbeatRouter);
 
-GraphqlServer.applyMiddleware({ app })
+const schema = createSchema()
+app.use(
+    '/graphql',
+    graphqlHTTP({
+        schema,
+        graphiql: true,
+        context: { hello: 'world' }
+    }),
+);
 
 // Print API errors
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

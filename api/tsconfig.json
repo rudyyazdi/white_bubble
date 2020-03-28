@@ -15,7 +15,8 @@
     "paths": {
       "@shared/*": ["src/shared/*"],
       "@routes/*": ["src/routes/*"],
-      "@server": ["src/Server"]
+      "@server": ["src/Server"],
+      "@graphql": ["src/graphql"]
     },
     "types": ["node"],
     "typeRoots": ["node_modules/@types"]
