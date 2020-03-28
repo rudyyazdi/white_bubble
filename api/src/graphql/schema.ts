@@ -4,7 +4,7 @@ import {
   GraphQLObjectType,
   GraphQLString,
   GraphQLList,
-  GraphQLFieldResolver
+  GraphQLFieldResolver,
 } from 'graphql';
 
 interface IBubble {
@@ -36,8 +36,9 @@ const createSchema = () => {
     },
   })
 
-  const addBubble: GraphQLFieldResolver<undefined, any> = (a, bubble, c, e) => {
-    bubbles.push({ text: bubble.text })
+  const addBubble: GraphQLFieldResolver<any, any> = (_source, arg) => {
+    const bubble = arg as IBubble
+    bubbles.push(bubble)
     return bubble;
   }
 
