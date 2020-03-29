@@ -33,7 +33,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use('/heartbeat', HeartbeatRouter);
 
 const schema = createSchema()
-app.use(
+app.post(
     '/graphql',
     graphqlHTTP({
         schema,
@@ -41,7 +41,7 @@ app.use(
     }),
 );
 
-app.get('/playground', expressPlayground({ endpoint: '/graphql' }))
+app.get('/graphql', expressPlayground({ endpoint: '/graphql' }))
 
 // Print API errors
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
