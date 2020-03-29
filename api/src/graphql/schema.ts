@@ -12,15 +12,14 @@ interface IBubble {
   text: string
 }
 
-interface IAttribute {
+export interface IAttribute {
   name: string
   kind: 'Boolean' | 'Enum' | 'Integer'
   options?: string[]
 }
 
-const createSchema = () => {
+const createSchema = (attributes: IAttribute[]) => {
   const bubbles: IBubble[] = []
-  const attributes: IAttribute[] = []
 
   const bubbleTypeFields = ({
     text: {

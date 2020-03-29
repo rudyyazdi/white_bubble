@@ -1,7 +1,6 @@
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
-import graphqlHTTP from 'express-graphql';
 import { default as expressPlayground } from 'graphql-playground-middleware-express';
 
 import express, { Request, Response, NextFunction } from 'express';
@@ -10,7 +9,7 @@ import 'express-async-errors';
 
 import HeartbeatRouter from './routes/Heartbeat';
 import logger from '@shared/Logger';
-import createSchema from 'src/graphql/schema'
+import graphqlMiddleware from 'src/middlewares/graphqlMiddleware'
 
 // Init express
 const app = express();
@@ -32,14 +31,7 @@ if (process.env.NODE_ENV === 'production') {
 // Add APIs
 app.use('/heartbeat', HeartbeatRouter);
 
-const schema = createSchema()
-app.post(
-    '/graphql',
-    graphqlHTTP({
-        schema,
-        context: { hello: 'world' }
-    }),
-);
+app.post('/graphql', graphqlMiddleware());
 
 app.get('/graphql', expressPlayground({ endpoint: '/graphql' }))
 
