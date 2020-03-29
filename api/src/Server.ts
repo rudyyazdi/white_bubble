@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import graphqlHTTP from 'express-graphql';
+import { default as expressPlayground } from 'graphql-playground-middleware-express';
 
 import express, { Request, Response, NextFunction } from 'express';
 import { BAD_REQUEST } from 'http-status-codes';
@@ -36,10 +37,11 @@ app.use(
     '/graphql',
     graphqlHTTP({
         schema,
-        graphiql: true,
         context: { hello: 'world' }
     }),
 );
+
+app.get('/playground', expressPlayground({ endpoint: '/graphql' }))
 
 // Print API errors
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
