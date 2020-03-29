@@ -3,6 +3,8 @@ import {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLString,
+  GraphQLInt,
+  GraphQLBoolean,
   GraphQLList,
   GraphQLFieldResolver,
   GraphQLEnumType,
@@ -18,14 +20,27 @@ export interface IAttribute {
   options?: string[]
 }
 
+const kindToGraphqlTypeMap = {
+  'Boolean': GraphQLBoolean,
+  'Enum': GraphQLString,
+  'Integer': GraphQLInt,
+}
+
 const createSchema = (attributes: IAttribute[]) => {
   const bubbles: IBubble[] = []
 
-  const bubbleTypeFields = {
+  const bubbleTypeFields: { [key: string]: { type: any } } = {
     text: {
       type: GraphQLNonNull(GraphQLString),
     },
   }
+
+  attributes.forEach((attribute: IAttribute) => {
+    bubbleTypeFields[attribute.name] = {
+      type: kindToGraphqlTypeMap[attribute.kind]
+    }
+  })
+
   const bubbleType = new GraphQLObjectType({
     name: 'Bubble',
     fields: bubbleTypeFields
