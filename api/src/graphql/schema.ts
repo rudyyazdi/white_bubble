@@ -14,30 +14,38 @@ interface IBubble {
   text: string
 }
 
-export interface IAttribute {
+export interface IBooleanAttribute {
   name: string
-  kind: 'Boolean' | 'Enum' | 'Integer'
-  options?: string[]
+  kind: 'Boolean'
 }
 
-const kindToGraphqlTypeMap = ({ kind, options = [], name }: IAttribute) => {
-  if (kind === 'Boolean') {
-    return GraphQLBoolean
-  }
+export interface IIntegerAttribute {
+  name: string
+  kind: 'Integer'
+}
 
-  if (kind === 'Integer') {
-    return GraphQLInt
-  }
+export interface IEnumAttribute {
+  name: string
+  kind: 'Enum'
+  options: string[]
+}
 
-  if (kind === 'Enum') {
-    const values = options?.reduce((acc: { [key: string]: {} }, option) => { acc[option] = {}; return acc }, {})
-    const enumTypeConfig = {
-      name,
-      values
-    }
-    return new GraphQLEnumType(enumTypeConfig)
+export type IAttribute = IBooleanAttribute | IIntegerAttribute | IEnumAttribute
+
+const kindToGraphqlTypeMap = (attribute: IAttribute) => {
+  switch (attribute.kind) {
+    case 'Boolean': return GraphQLBoolean;
+    case 'Integer': return GraphQLInt;
+    case 'Enum': {
+      const values = attribute.options.reduce((acc: { [key: string]: {} }, option) => { acc[option] = {}; return acc }, {})
+      const { name } = attribute;
+      const enumTypeConfig = {
+        name,
+        values
+      }
+      return new GraphQLEnumType(enumTypeConfig)
+    };
   }
-  throw new Error('uncharted attribute.kind')
 }
 
 const createSchema = (attributes: IAttribute[]) => {
