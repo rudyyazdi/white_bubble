@@ -21,17 +21,17 @@ export interface IAttribute {
 const createSchema = (attributes: IAttribute[]) => {
   const bubbles: IBubble[] = []
 
-  const bubbleTypeFields = ({
+  const bubbleTypeFields = {
     text: {
       type: GraphQLNonNull(GraphQLString),
     },
-  })
+  }
   const bubbleType = new GraphQLObjectType({
     name: 'Bubble',
     fields: bubbleTypeFields
   });
 
-  const attributeTypeFields = ({
+  const attributeTypeFields = {
     name: {
       type: GraphQLNonNull(GraphQLString),
     },
@@ -48,7 +48,7 @@ const createSchema = (attributes: IAttribute[]) => {
     options: {
       type: GraphQLList(GraphQLString)
     }
-  })
+  }
 
   const attributeType = new GraphQLObjectType({
     name: 'Attribute',
