@@ -4,9 +4,11 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { Db } from 'mongodb';
 
 import AttributeDal from 'src/domain/attribute/Dal'
+import BubbleDal from 'src/domain/bubble/Dal'
 
 const GraphqlMiddleware = async (db: Db) => {
   const attributeDal = AttributeDal(db)
+  const bubbleDal = BubbleDal(db)
 
   const attributes: IAttribute[] = await attributeDal.getAll()
 
@@ -14,7 +16,8 @@ const GraphqlMiddleware = async (db: Db) => {
     const schema = createSchema(attributes)
 
     const dal = {
-      attribute: attributeDal
+      attribute: attributeDal,
+      bubble: bubbleDal,
     }
 
     return graphqlHTTP({

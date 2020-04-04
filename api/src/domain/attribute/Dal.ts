@@ -1,8 +1,6 @@
 import { Db } from 'mongodb';
 import { IAttribute } from 'src/graphql/schema';
 
-const COL = 'attribute'
-
 export interface IAttributeDal {
   getAll: () => Promise<IAttribute[]>
   insertOne: (attr: IAttribute) => Promise<void>

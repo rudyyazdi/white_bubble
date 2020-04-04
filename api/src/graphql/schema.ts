@@ -10,10 +10,12 @@ import {
   GraphQLEnumType,
 } from 'graphql';
 import { Db } from 'mongodb';
-import AttributeDal, { IAttributeDal } from 'src/domain/attribute/Dal'
+import { IAttributeDal } from 'src/domain/attribute/Dal'
+import { IBubbleDal } from 'src/domain/bubble/Dal'
 
-interface IBubble {
+export interface IBubble {
   text: string
+  [key: string]: boolean | string | number
 }
 
 export interface IBooleanAttribute {
@@ -36,8 +38,11 @@ export interface IContext {
   db: Db,
   dal: {
     attribute: IAttributeDal
+    bubble: IBubbleDal
   }
 }
+
+type IFieldResolver = GraphQLFieldResolver<any, IContext>
 
 export type IAttribute = IBooleanAttribute | IIntegerAttribute | IEnumAttribute
 
@@ -58,8 +63,6 @@ const kindToGraphqlTypeMap = (attribute: IAttribute) => {
 }
 
 const createSchema = (attributes: IAttribute[]) => {
-  const bubbles: IBubble[] = []
-
   const bubbleTypeFields: { [key: string]: { type: any } } = {
     text: {
       type: GraphQLNonNull(GraphQLString),
@@ -101,33 +104,32 @@ const createSchema = (attributes: IAttribute[]) => {
     fields: attributeTypeFields
   });
 
+  const searchAttributes: IFieldResolver = () => attributes
+  const searchBubbles: IFieldResolver = (_source, arg, { dal: { bubble: { collection } } }) => collection.find({}).toArray()
+
   const queryType = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
       searchBubbles: {
         type: GraphQLList(bubbleType),
-        resolve() {
-          return bubbles;
-        },
+        resolve: searchBubbles,
       },
       searchAttributes: {
         type: GraphQLList(attributeType),
-        resolve() {
-          return attributes;
-        }
+        resolve: searchAttributes
       }
     },
   })
 
-  const addBubble: GraphQLFieldResolver<any, any> = (_source, arg) => {
+  const addBubble: IFieldResolver = (_source, arg, { dal: { bubble: { insertOne } } }) => {
     const bubble = arg as IBubble
-    bubbles.push(bubble)
+    insertOne(bubble)
     return bubble;
   }
 
-  const addAttribute: GraphQLFieldResolver<any, IContext> = (_source, arg, { dal: { attribute: attributeDal } }) => {
+  const addAttribute: IFieldResolver = (_source, arg, { dal: { attribute: { insertOne } } }) => {
     const attribute = arg as IAttribute
-    attributeDal.insertOne(attribute)
+    insertOne(attribute)
     attributes.push(attribute)
     return attribute;
   }
