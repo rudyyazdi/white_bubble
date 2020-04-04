@@ -1,9 +1,25 @@
 import './LoadEnv'; // Must be the first import
-import app from '@server';
+import Server from '@server';
 import logger from '@shared/Logger';
+import { MongoClient } from 'mongodb';
 
-// Start the server
+const url = 'mongodb://localhost:27017';
+const dbName = 'white';
+const client = new MongoClient(url);
 const port = Number(process.env.PORT || 3000);
-app.listen(port, () => {
-    logger.info('Express server started on port: ' + port);
+
+client.connect((err) => {
+    if (err) throw (err)
+
+    logger.info('Connected successfully to Mongo server');
+
+    const db = client.db(dbName);
+
+    const app = Server(db)
+
+    app.listen(port, () => {
+        logger.info('Express server started on port: ' + port);
+    });
 });
+
+
