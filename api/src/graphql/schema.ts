@@ -63,24 +63,24 @@ const kindToGraphqlTypeMap = (attribute: IAttribute) => {
 }
 
 const createSchema = (attributes: IAttribute[]) => {
-  const bubbleTypeFields: { [key: string]: { type: any } } = {
+  const addBubbleFields: { [key: string]: { type: any } } = {
     text: {
       type: GraphQLNonNull(GraphQLString),
     },
   }
 
   attributes.forEach((attribute: IAttribute) => {
-    bubbleTypeFields[attribute.name] = {
+    addBubbleFields[attribute.name] = {
       type: kindToGraphqlTypeMap(attribute)
     }
   })
 
   const bubbleType = new GraphQLObjectType({
     name: 'Bubble',
-    fields: bubbleTypeFields
+    fields: addBubbleFields
   });
 
-  const attributeTypeFields = {
+  const addAttributeFields = {
     name: {
       type: GraphQLNonNull(GraphQLString),
     },
@@ -101,7 +101,7 @@ const createSchema = (attributes: IAttribute[]) => {
 
   const attributeType = new GraphQLObjectType({
     name: 'Attribute',
-    fields: attributeTypeFields
+    fields: addAttributeFields
   });
 
   const searchAttributes: IFieldResolver = () => attributes
@@ -139,12 +139,12 @@ const createSchema = (attributes: IAttribute[]) => {
     fields: {
       addBubble: {
         type: bubbleType,
-        args: bubbleTypeFields,
+        args: addBubbleFields,
         resolve: addBubble,
       },
       addAttribute: {
         type: attributeType,
-        args: attributeTypeFields,
+        args: addAttributeFields,
         resolve: addAttribute,
       },
     },
