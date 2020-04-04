@@ -10,9 +10,9 @@ import { Db } from 'mongodb';
 
 import HeartbeatRouter from './routes/Heartbeat';
 import logger from '@shared/Logger';
-import graphqlMiddleware from 'src/middlewares/graphqlMiddleware'
+import GraphqlMiddleware from 'src/middlewares/graphqlMiddleware'
 
-const Server = (db: Db) => {
+const Server = async (db: Db) => {
     const app = express();
 
     app.use(express.json());
@@ -32,7 +32,8 @@ const Server = (db: Db) => {
     // Add APIs
     app.use('/heartbeat', HeartbeatRouter);
 
-    app.post('/graphql', graphqlMiddleware());
+    const graphqlMiddleware = await GraphqlMiddleware(db)
+    app.post('/graphql', graphqlMiddleware)
 
     app.get('/graphql', expressPlayground({ endpoint: '/graphql' }))
 

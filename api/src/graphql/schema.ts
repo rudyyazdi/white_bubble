@@ -9,6 +9,8 @@ import {
   GraphQLFieldResolver,
   GraphQLEnumType,
 } from 'graphql';
+import { Db } from 'mongodb';
+import AttributeDal, { IAttributeDal } from 'src/domain/attribute/Dal'
 
 interface IBubble {
   text: string
@@ -28,6 +30,13 @@ export interface IEnumAttribute {
   name: string
   kind: 'Enum'
   options: string[]
+}
+
+export interface IContext {
+  db: Db,
+  dal: {
+    attribute: IAttributeDal
+  }
 }
 
 export type IAttribute = IBooleanAttribute | IIntegerAttribute | IEnumAttribute
@@ -116,8 +125,9 @@ const createSchema = (attributes: IAttribute[]) => {
     return bubble;
   }
 
-  const addAttribute: GraphQLFieldResolver<any, any> = (_source, arg) => {
+  const addAttribute: GraphQLFieldResolver<any, IContext> = (_source, arg, { dal: { attribute: attributeDal } }) => {
     const attribute = arg as IAttribute
+    attributeDal.insertOne(attribute)
     attributes.push(attribute)
     return attribute;
   }
