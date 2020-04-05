@@ -83,4 +83,18 @@ describe('search', () => {
     expect(onlyText.length).toBe(2)
     done()
   });
+
+  it('uses grater than equal', async (done: () => void) => {
+    const dal = Dal(db)
+    await dal.insertOne({ text: 'sometext', number: 1 })
+    await dal.insertOne({ text: 'sometext', number: 2 })
+    await dal.insertOne({ text: 'sometext', number: 3 })
+    await dal.insertOne({ text: 'sometext', number: 4 })
+    const all = await dal.search({})
+    expect(all.length).toBe(4)
+
+    const onlyText = await dal.search({ numberGte: 2 })
+    expect(onlyText.length).toBe(3)
+    done()
+  });
 });

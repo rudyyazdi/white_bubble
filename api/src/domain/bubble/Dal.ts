@@ -19,6 +19,8 @@ const Dal: (db: Db) => IBubbleDal = (db) => {
         return { [field]: value }
       case 'Gt':
         return { [field]: { $gt: value } }
+      case 'Gte':
+        return { [field]: { $gte: value } }
       default:
         return {}
     }
