@@ -17,6 +17,8 @@ const Dal: (db: Db) => IBubbleDal = (db) => {
         return { [field]: { '$regex': value, '$options': 'i' } }
       case 'Eq':
         return { [field]: value }
+      case 'Gt':
+        return { [field]: { $gt: value } }
       default:
         return {}
     }
@@ -27,7 +29,7 @@ const Dal: (db: Db) => IBubbleDal = (db) => {
     const keys = Object.keys(args)
 
     keys.forEach((key: string) => {
-      const [field, pred] = key.split(/(?=Eq|Matches)/g)
+      const [field, pred] = key.split(/(?=Eq|Matches|Gt)/g)
       find = { ...find, ...makeQuery(field, pred, args[key]) }
     })
 
