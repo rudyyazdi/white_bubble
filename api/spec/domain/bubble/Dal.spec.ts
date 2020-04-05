@@ -1,6 +1,5 @@
 import Dal from 'src/domain/bubble/Dal';
 import { MongoClient, Db } from 'mongodb';
-import DeepAssign from 'object-assign-deep';
 
 describe('search', () => {
   let client: MongoClient

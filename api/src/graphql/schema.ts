@@ -8,6 +8,7 @@ import {
   GraphQLList,
   GraphQLFieldResolver,
   GraphQLEnumType,
+  GraphQLFieldConfigArgumentMap
 } from 'graphql';
 import { Db } from 'mongodb';
 import { IAttributeDal } from 'src/domain/attribute/Dal'
@@ -104,11 +105,35 @@ const createSchema = (attributes: IAttribute[]) => {
     fields: addAttributeFields
   });
 
-  const searchBubblesFields = {
+  const searchBubblesFields: GraphQLFieldConfigArgumentMap = {
     textMatches: {
       type: GraphQLString,
     }
   }
+
+  const legalQueriesForAttribute = {
+    Boolean: ['Eq', 'In'],
+    Integer: ['Eq', 'In', 'Gt', 'Gte', 'Lt', 'Lte'],
+    Enum: ['Eq', 'In', 'Matches'],
+  }
+
+  attributes.forEach(({ kind, name }: IAttribute): void => {
+    const legalQueries = legalQueriesForAttribute[kind]
+    legalQueries.forEach((query) => {
+      const argType = ((s) => {
+        switch (s) {
+          case 'Boolean::Eq': return GraphQLBoolean
+          case 'Boolean::In': return GraphQLList(GraphQLBoolean)
+          case 'Integer::In': return GraphQLList(GraphQLInt)
+          case 'Enum::Eq': return GraphQLString
+          case 'Enum::Matches': return GraphQLString
+          case 'Enum::In': return GraphQLList(GraphQLString)
+          default: return GraphQLInt
+        }
+      })(`${kind}::${query}`)
+      searchBubblesFields[name + query] = { type: argType }
+    })
+  })
 
   const searchAttributes: IFieldResolver = () => attributes
   const searchBubbles: IFieldResolver = async (_source, arg, { dal: { bubble: { search } } }) => {
