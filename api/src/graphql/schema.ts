@@ -104,8 +104,16 @@ const createSchema = (attributes: IAttribute[]) => {
     fields: addAttributeFields
   });
 
+  const searchBubblesFields = {
+    textMatches: {
+      type: GraphQLString,
+    }
+  }
+
   const searchAttributes: IFieldResolver = () => attributes
-  const searchBubbles: IFieldResolver = (_source, arg, { dal: { bubble: { collection } } }) => collection.find({}).toArray()
+  const searchBubbles: IFieldResolver = async (_source, arg, { dal: { bubble: { search } } }) => {
+    return await search(arg)
+  }
 
   const queryType = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -113,6 +121,7 @@ const createSchema = (attributes: IAttribute[]) => {
       searchBubbles: {
         type: GraphQLList(bubbleType),
         resolve: searchBubbles,
+        args: searchBubblesFields
       },
       searchAttributes: {
         type: GraphQLList(attributeType),
