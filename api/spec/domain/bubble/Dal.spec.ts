@@ -55,4 +55,18 @@ describe('search', () => {
     expect(onlyText.length).toBe(2)
     done()
   });
+
+  it('uses equal', async (done: () => void) => {
+    const dal = Dal(db)
+    await dal.insertOne({ text: 'sometext' })
+    await dal.insertOne({ text: 'sometext' })
+    await dal.insertOne({ text: 'other sometext' })
+    await dal.insertOne({ text: 'a beautiful fish in the sea' })
+    const all = await dal.search({})
+    expect(all.length).toBe(4)
+
+    const onlyText = await dal.search({ textEq: 'sometext' })
+    expect(onlyText.length).toBe(2)
+    done()
+  });
 });

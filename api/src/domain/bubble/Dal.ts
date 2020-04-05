@@ -15,6 +15,8 @@ const Dal: (db: Db) => IBubbleDal = (db) => {
     switch (pred) {
       case 'Matches':
         return { [field]: { '$regex': value, '$options': 'i' } }
+      case 'Eq':
+        return { [field]: value }
       default:
         return {}
     }
