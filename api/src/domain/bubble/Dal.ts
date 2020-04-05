@@ -26,8 +26,7 @@ const Dal: (db: Db) => IBubbleDal = (db) => {
 
     keys.forEach((key: string) => {
       const [field, pred] = key.split(/(?=Eq|Matches)/g)
-      const additionalFind = makeQuery(field, pred, args[key])
-      find = { ...find, ...additionalFind }
+      find = { ...find, ...makeQuery(field, pred, args[key]) }
     })
 
     return await collection.find(find).toArray()
