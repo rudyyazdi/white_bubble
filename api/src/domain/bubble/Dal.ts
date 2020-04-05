@@ -37,7 +37,7 @@ const Dal: (db: Db) => IBubbleDal = (db) => {
     const keys = Object.keys(args)
 
     keys.forEach((key: string) => {
-      const [field, pred] = key.split(/(?=Eq|Matches|Gt|Lt|In)/g)
+      const [field, pred] = key.split(/(?=Eq|Matches|Gt|Lt|In)/)
       find = { ...find, ...makeQuery(field, pred, args[key]) }
     })
 
