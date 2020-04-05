@@ -1,5 +1,6 @@
 import Dal from 'src/domain/bubble/Dal';
-import { MongoClient, Db } from 'mongodb'
+import { MongoClient, Db } from 'mongodb';
+import DeepAssign from 'object-assign-deep';
 
 describe('search', () => {
   let client: MongoClient
@@ -123,6 +124,20 @@ describe('search', () => {
 
     const onlyText = await dal.search({ numberLte: 3 })
     expect(onlyText.length).toBe(3)
+    done()
+  });
+
+  it('uses less than and greater than', async (done: () => void) => {
+    const dal = Dal(db)
+    await dal.insertOne({ text: 'sometext', number: 1 })
+    await dal.insertOne({ text: 'sometext', number: 2 })
+    await dal.insertOne({ text: 'sometext', number: 3 })
+    await dal.insertOne({ text: 'sometext', number: 4 })
+    const all = await dal.search({})
+    expect(all.length).toBe(4)
+
+    const onlyText = await dal.search({ numberLt: 4, numberGt: 1 })
+    expect(onlyText.length).toBe(2)
     done()
   });
 

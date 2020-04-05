@@ -1,5 +1,6 @@
 import { Db } from 'mongodb';
 import { IBubble } from 'src/graphql/schema';
+import DeepAssign from 'object-assign-deep';
 import { Collection } from 'mongodb'
 
 export interface IBubbleDal {
@@ -16,7 +17,7 @@ const Dal: (db: Db) => IBubbleDal = (db) => {
       case 'Matches':
         return { [field]: { '$regex': value, '$options': 'i' } }
       case 'Eq':
-        return { [field]: value }
+        return { [field]: { $eq: value } }
       case 'Gt':
         return { [field]: { $gt: value } }
       case 'Gte':
@@ -38,7 +39,7 @@ const Dal: (db: Db) => IBubbleDal = (db) => {
 
     keys.forEach((key: string) => {
       const [field, pred] = key.split(/(?=Eq|Matches|Gt|Lt|In)/)
-      find = { ...find, ...makeQuery(field, pred, args[key]) }
+      find = DeepAssign(find, makeQuery(field, pred, args[key]))
     })
 
     return await collection.find(find).toArray()
