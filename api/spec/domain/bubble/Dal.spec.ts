@@ -153,4 +153,28 @@ describe('search', () => {
     expect(onlyText.length).toBe(2)
     done()
   });
+
+  it('uses in with ID', async (done: () => void) => {
+    const dal = Dal(db)
+    await dal.insertOne({ text: 'sometext', id: 1 })
+    await dal.insertOne({ text: 'sometext', id: 2 })
+    await dal.insertOne({ text: 'sometext', id: 3 })
+    await dal.insertOne({ text: 'sometext', id: 4 })
+
+    const onlyText = await dal.search({ idIn: [1, 2] })
+    expect(onlyText.length).toBe(2)
+    done()
+  });
+
+  it('uses equal with ID', async (done: () => void) => {
+    const dal = Dal(db)
+    await dal.insertOne({ text: 'sometext', id: 1 })
+    await dal.insertOne({ text: 'sometext', id: 2 })
+    await dal.insertOne({ text: 'sometext', id: 3 })
+    await dal.insertOne({ text: 'sometext', id: 4 })
+
+    const onlyText = await dal.search({ idEq: 2 })
+    expect(onlyText.length).toBe(1)
+    done()
+  });
 });
