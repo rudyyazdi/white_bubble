@@ -15,6 +15,7 @@ const DeepAssign = (main: { [key: string]: any }, target: { [key: string]: any }
 export interface IBubbleDal {
   collection: Collection
   insertOne: (attr: IBubble) => Promise<void>
+  update: (ids: string[], attr: { [key: string]: any }) => Promise<void>
   search: (args: { [key: string]: any }) => Promise<IBubble[]>
 }
 
@@ -26,9 +27,11 @@ const Dal: (db: Db) => IBubbleDal = (db) => {
     return bubble
   }
 
+  const transformObjectId = (v: string) => new ObjectId(v)
+
   const makeQuery = (field: string, pred: string, value: any): {} => {
     if (field === 'id' && pred === 'Eq') return ({ _id: new ObjectId(value) })
-    if (field === 'id' && pred === 'In') return ({ _id: { $in: value.map((v: string) => new ObjectId(v)) } })
+    if (field === 'id' && pred === 'In') return ({ _id: { $in: value.map(transformObjectId) } })
     if (pred === 'Matches') return { [field]: { '$regex': value, '$options': 'i' } }
     if (pred === 'Eq') return { [field]: { $eq: value } }
     if (pred === 'Gt') return { [field]: { $gt: value } }
@@ -58,10 +61,15 @@ const Dal: (db: Db) => IBubbleDal = (db) => {
     await collection.insertOne(attr)
   }
 
+  const update = async (ids: string[], attr: { [key: string]: any }): Promise<void> => {
+    await collection.updateMany({ _id: { $in: ids.map(transformObjectId) } }, { $set: attr })
+  }
+
   return {
     collection,
     insertOne,
-    search
+    search,
+    update
   }
 }
 
