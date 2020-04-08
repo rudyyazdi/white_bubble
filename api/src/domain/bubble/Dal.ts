@@ -1,7 +1,16 @@
-import { Db } from 'mongodb';
+import { Db, ObjectID, Collection, ObjectId } from 'mongodb';
 import { IBubble } from 'src/graphql/schema';
-import DeepAssign from 'object-assign-deep';
-import { Collection } from 'mongodb'
+
+const DeepAssign = (main: { [key: string]: any }, target: { [key: string]: any }) => {
+  Object.keys(target).forEach((key) => {
+    if (main[key]) {
+      main[key] = { ...main[key], ...target[key] }
+    } else {
+      main = { ...main, ...target }
+    }
+  })
+  return main
+}
 
 export interface IBubbleDal {
   collection: Collection
@@ -12,25 +21,22 @@ export interface IBubbleDal {
 const Dal: (db: Db) => IBubbleDal = (db) => {
   const collection = db.collection('bubble');
 
+  const transformId = (bubble: IBubble) => {
+    if (bubble._id) bubble.id = bubble._id.toString()
+    return bubble
+  }
+
   const makeQuery = (field: string, pred: string, value: any): {} => {
-    switch (pred) {
-      case 'Matches':
-        return { [field]: { '$regex': value, '$options': 'i' } }
-      case 'Eq':
-        return { [field]: { $eq: value } }
-      case 'Gt':
-        return { [field]: { $gt: value } }
-      case 'Gte':
-        return { [field]: { $gte: value } }
-      case 'Lt':
-        return { [field]: { $lt: value } }
-      case 'Lte':
-        return { [field]: { $lte: value } }
-      case 'In':
-        return { [field]: { $in: value } }
-      default:
-        return {}
-    }
+    if (field === 'id' && pred === 'Eq') return ({ _id: new ObjectId(value) })
+    if (field === 'id' && pred === 'In') return ({ _id: { $in: value.map((v: string) => new ObjectId(v)) } })
+    if (pred === 'Matches') return { [field]: { '$regex': value, '$options': 'i' } }
+    if (pred === 'Eq') return { [field]: { $eq: value } }
+    if (pred === 'Gt') return { [field]: { $gt: value } }
+    if (pred === 'Gte') return { [field]: { $gte: value } }
+    if (pred === 'Lt') return { [field]: { $lt: value } }
+    if (pred === 'Lte') return { [field]: { $lte: value } }
+    if (pred === 'In') return { [field]: { $in: value } }
+    return {}
   }
 
   const search = async (args: { [key: string]: any }) => {
@@ -42,10 +48,13 @@ const Dal: (db: Db) => IBubbleDal = (db) => {
       find = DeepAssign(find, makeQuery(field, pred, args[key]))
     })
 
-    return await collection.find(find).toArray()
+    const arr = await collection.find(find).toArray()
+
+    return arr.map(transformId)
   }
 
   const insertOne = async (attr: IBubble): Promise<void> => {
+    if (attr.id) { attr._id = new ObjectID(attr.id) }
     await collection.insertOne(attr)
   }
 

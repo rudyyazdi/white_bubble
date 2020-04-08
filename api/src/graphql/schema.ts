@@ -10,13 +10,15 @@ import {
   GraphQLEnumType,
   GraphQLFieldConfigArgumentMap
 } from 'graphql';
-import { Db } from 'mongodb';
+import { Db, ObjectID } from 'mongodb';
 import { IAttributeDal } from 'src/domain/attribute/Dal'
 import { IBubbleDal } from 'src/domain/bubble/Dal'
 
 export interface IBubble {
   text: string
-  [key: string]: boolean | string | number
+  _id?: ObjectID
+  id?: string
+  [key: string]: boolean | string | number | undefined | ObjectID
 }
 
 export interface IBooleanAttribute {
@@ -68,6 +70,9 @@ const createSchema = (attributes: IAttribute[]) => {
     text: {
       type: GraphQLNonNull(GraphQLString),
     },
+    id: {
+      type: GraphQLString,
+    },
   }
 
   attributes.forEach((attribute: IAttribute) => {
@@ -108,6 +113,12 @@ const createSchema = (attributes: IAttribute[]) => {
   const searchBubblesFields: GraphQLFieldConfigArgumentMap = {
     textMatches: {
       type: GraphQLString,
+    },
+    idEq: {
+      type: GraphQLString,
+    },
+    idIn: {
+      type: GraphQLList(GraphQLString),
     }
   }
 

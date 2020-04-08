@@ -156,24 +156,25 @@ describe('search', () => {
 
   it('uses in with ID', async (done: () => void) => {
     const dal = Dal(db)
-    await dal.insertOne({ text: 'sometext', id: 1 })
-    await dal.insertOne({ text: 'sometext', id: 2 })
-    await dal.insertOne({ text: 'sometext', id: 3 })
-    await dal.insertOne({ text: 'sometext', id: 4 })
+    await dal.insertOne({ text: 'sometext', id: '507f191e810c19729de860ea' })
+    await dal.insertOne({ text: 'sometext', id: '507f1f77bcf86cd799439011' })
+    await dal.insertOne({ text: 'sometext', id: '5e8d7ce72129be5137ca2fa2' })
+    await dal.insertOne({ text: 'sometext', id: '5e8d7cf82129be5137ca2fa3' })
 
-    const onlyText = await dal.search({ idIn: [1, 2] })
+    const onlyText = await dal.search({ idIn: ['507f191e810c19729de860ea', '507f1f77bcf86cd799439011'] })
     expect(onlyText.length).toBe(2)
     done()
   });
 
   it('uses equal with ID', async (done: () => void) => {
     const dal = Dal(db)
-    await dal.insertOne({ text: 'sometext', id: 1 })
-    await dal.insertOne({ text: 'sometext', id: 2 })
-    await dal.insertOne({ text: 'sometext', id: 3 })
-    await dal.insertOne({ text: 'sometext', id: 4 })
+    await dal.insertOne({ text: 'sometext', id: '507f191e810c19729de860ea' })
+    await dal.insertOne({ text: 'sometext', id: '507f1f77bcf86cd799439011' })
+    await dal.insertOne({ text: 'sometext', id: '5e8d7ce72129be5137ca2fa2' })
+    await dal.insertOne({ text: 'sometext', id: '5e8d7cf82129be5137ca2fa3' })
 
-    const onlyText = await dal.search({ idEq: 2 })
+    const onlyText = await dal.search({ idEq: '507f191e810c19729de860ea' })
+
     expect(onlyText.length).toBe(1)
     done()
   });
