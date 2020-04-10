@@ -6,7 +6,6 @@ import {
   OperationDefinition,
   SelectionSet,
   Field,
-  Name,
 } from './GraphAst'
 
 import {DocumentNode} from 'graphql'
@@ -20,15 +19,11 @@ const bubblesQuery: DocumentNode = new Document({
       selectionSet: new SelectionSet({
         selections: [
           new Field({
-            name: new Name({
-              value: 'searchBubbles'
-            }),
+            name: 'searchBubbles',
             selectionSet: new SelectionSet({
               selections: [
                 new Field({
-                  name: new Name({
-                    value: 'text'
-                  })
+                  name: 'text'
                 })
               ]
             })

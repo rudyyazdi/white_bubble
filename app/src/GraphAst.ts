@@ -33,21 +33,21 @@ class SelectionSet implements SelectionSetNode {
   }
 }
 
-class Field implements FieldNode {
-  readonly kind = 'Field'
-  name: NameNode
-  selectionSet?: SelectionSetNode
-  constructor({name, selectionSet}: {name: NameNode, selectionSet?: SelectionSetNode}){
-    this.name = name
-    this.selectionSet = selectionSet
-  }
-}
-
 class Name implements NameNode {
   readonly kind = 'Name'
   value: string
   constructor({value}: {value: string}) {
     this.value = value
+  }
+}
+
+class Field implements FieldNode {
+  readonly kind = 'Field'
+  name: NameNode
+  selectionSet?: SelectionSetNode
+  constructor({name, selectionSet}: {name: string, selectionSet?: SelectionSetNode}){
+    this.name = new Name({value: name})
+    this.selectionSet = selectionSet
   }
 }
 
