@@ -1,11 +1,19 @@
 import React from 'react';
 import { Navigation } from "./Navigation";
+import { Bubbles } from "./Bubbles";
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider } from '@apollo/react-hooks';
+
+const client = new ApolloClient();
 
 function App() {
   return (
-    <div >
-      <Navigation />
-    </div>
+    <ApolloProvider client={client}>
+      <div >
+        <Navigation />
+        <Bubbles />
+      </div>
+    </ApolloProvider>
   );
 }
 
