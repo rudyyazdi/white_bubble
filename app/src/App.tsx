@@ -1,13 +1,10 @@
 import React from 'react';
+import { Navigation } from "./Navigation";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Hey
-        </p>
-      </header>
+    <div >
+      <Navigation />
     </div>
   );
 }
