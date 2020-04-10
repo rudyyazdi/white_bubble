@@ -6,7 +6,7 @@ import { MongoClient } from 'mongodb';
 const url = 'mongodb://localhost:27017';
 const dbName = 'white';
 const client = new MongoClient(url);
-const port = Number(process.env.PORT || 3000);
+const port = Number(process.env.PORT || 4000);
 
 client.connect(async (err) => {
     if (err) throw (err)
