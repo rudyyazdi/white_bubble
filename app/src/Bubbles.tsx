@@ -8,8 +8,15 @@ import {
   Field,
 } from './GraphAst'
 import StackGrid from 'react-stack-grid';
+import { Button, Card, Elevation } from "@blueprintjs/core";
 
 import {DocumentNode} from 'graphql'
+
+export interface IBubble {
+  text: string
+  id?: string
+  [key: string]: boolean | string | number | undefined
+}
 
 const introspectionQuery = loader('./IntrospectionQuery.graphql')
 const selectBubbleType = ({__schema: {types}}: any) => types.filter((t: any) => t.name === 'Bubble')[0]
@@ -41,6 +48,10 @@ const fieldNamesToQuery = (() => {
   }
 })()
 
+const Bubble = ({bubble}: {bubble: IBubble}) => <Card elevation={Elevation.TWO} interactive>
+  <p>{bubble.text}</p>
+</Card>
+
 function BubbleGrid({bubbleType: {fields}}: {bubbleType: {fields: {name: string}[]}}): JSX.Element {
   const fieldNames = fields.map((f) => f.name)
   
@@ -49,10 +60,8 @@ function BubbleGrid({bubbleType: {fields}}: {bubbleType: {fields: {name: string}
   if (error) return <p>Error :(</p>;
 
   return(
-    <StackGrid columnWidth={150} >
-      {data.searchBubbles.map((b: {[key: string]: any}) => <div>
-        {b.text}
-      </div>)}
+    <StackGrid columnWidth={450} >
+      {data.searchBubbles.map((bubble: IBubble) => <Bubble bubble={bubble}/>)}
     </StackGrid>
   )
 }
