@@ -48,6 +48,9 @@ const fieldNamesToQuery = (() => {
   }
 })()
 
+const AddBubbleCard = () => <Card elevation={Elevation.TWO} interactive>
+  <p style={{textAlign: 'center', fontSize: '1.7em'}} >+</p>
+</Card>
 const Bubble = ({bubble}: {bubble: IBubble}) => <Card elevation={Elevation.TWO} interactive>
   <p>{bubble.text}</p>
 </Card>
@@ -60,9 +63,12 @@ function BubbleGrid({bubbleType: {fields}}: {bubbleType: {fields: {name: string}
   if (error) return <p>Error :(</p>;
 
   return(
-    <StackGrid columnWidth={450} >
-      {data.searchBubbles.map((bubble: IBubble) => <Bubble bubble={bubble}/>)}
-    </StackGrid>
+    <div style={{marginTop: '15px'}}>
+      <StackGrid columnWidth={350}>
+        <AddBubbleCard />
+        {data.searchBubbles.map((bubble: IBubble) => <Bubble bubble={bubble}/>)}
+      </StackGrid>
+    </div>
   )
 }
 
