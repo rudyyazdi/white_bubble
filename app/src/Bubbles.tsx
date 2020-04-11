@@ -43,7 +43,7 @@ const fieldNamesToQuery = (() => {
 function BubbleGrid({bubbleType: {fields}}: {bubbleType: {fields: {name: string}[]}}): JSX.Element {
   const fieldNames = fields.map((f) => f.name)
   
-  const { loading, error, data } = useQuery(fieldNamesToQuery(fieldNames));
+  const { loading, error, data } = useQuery(fieldNamesToQuery(fieldNames), {pollInterval: 500});
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
