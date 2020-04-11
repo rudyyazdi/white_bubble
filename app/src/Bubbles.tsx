@@ -7,6 +7,7 @@ import {
   SelectionSet,
   Field,
 } from './GraphAst'
+import StackGrid from 'react-stack-grid';
 
 import {DocumentNode} from 'graphql'
 
@@ -48,9 +49,11 @@ function BubbleGrid({bubbleType: {fields}}: {bubbleType: {fields: {name: string}
   if (error) return <p>Error :(</p>;
 
   return(
-    <div>
-      {JSON.stringify(data)}
-    </div>
+    <StackGrid columnWidth={150} >
+      {data.searchBubbles.map((b: {[key: string]: any}) => <div>
+        {b.text}
+      </div>)}
+    </StackGrid>
   )
 }
 
