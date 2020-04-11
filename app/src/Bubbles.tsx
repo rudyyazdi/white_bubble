@@ -13,31 +13,37 @@ import {DocumentNode} from 'graphql'
 const introspectionQuery = loader('./IntrospectionQuery.graphql')
 const selectBubbleType = ({__schema: {types}}: any) => types.filter((t: any) => t.name === 'Bubble')[0]
 
-const bubblesQuery: DocumentNode = new Document({
-  definitions: [
-    new OperationDefinition({
-      selectionSet: new SelectionSet({
-        selections: [
-          new Field({
-            name: 'searchBubbles',
-            selectionSet: new SelectionSet({
-              selections: [
-                new Field({
-                  name: 'text'
+const fieldNamesToQuery = (() => {
+  let fieldNamesString: string;
+  let query: DocumentNode;
+
+  return (fieldNames: string[]): DocumentNode => {
+    if (fieldNames.join(",") === fieldNamesString) return query
+    fieldNamesString = fieldNames.join(",")
+    query = new Document({
+      definitions: [
+        new OperationDefinition({
+          selectionSet: new SelectionSet({
+            selections: [
+              new Field({
+                name: 'searchBubbles',
+                selectionSet: new SelectionSet({
+                  selections: fieldNames.map((name) => new Field({name}))
                 })
-              ]
-            })
+              })
+            ]
           })
-        ]
-      })
+        })
+      ]
     })
-  ]
-})
+    return query
+  }
+})()
 
 function BubbleGrid({bubbleType: {fields}}: {bubbleType: {fields: {name: string}[]}}): JSX.Element {
   const fieldNames = fields.map((f) => f.name)
-
-  const { loading, error, data } = useQuery(bubblesQuery);
+  
+  const { loading, error, data } = useQuery(fieldNamesToQuery(fieldNames));
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
