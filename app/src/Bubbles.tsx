@@ -112,9 +112,6 @@ export const Bubbles = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
-    console.log(data);
-    
-  
   const bubbleType = selectType('Bubble')(data)
   const MutationType = selectType('Mutation')(data)
   const AddBubbleType = MutationType.fields.filter(({name}: any) => name === 'addBubble')[0]
